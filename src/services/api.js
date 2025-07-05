@@ -24,26 +24,26 @@ api.interceptors.request.use(
 );
 
 // Add a response interceptor to handle errors
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Clear auth data and redirect to login
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+// api.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response?.status === 401) {
+//       // Clear auth data and redirect to login
+//       localStorage.removeItem('token');
+//       localStorage.removeItem('user');
 
-      // Only redirect if not already on login page
-      if (!window.location.pathname.includes('/login')) {
-        if (window.location.pathname.includes('/admin')) {
-          window.location.href = '/admin/login';
-        } else {
-          window.location.href = '/login';
-        }
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+//       // Only redirect if not already on login page
+//       if (!window.location.pathname.includes('/login')) {
+//         if (window.location.pathname.includes('/admin')) {
+//           window.location.href = '/admin';
+//         } else {
+//           window.location.href = '/login';
+//         }
+//       }
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 // Admin API endpoints
 export const adminApi = {
