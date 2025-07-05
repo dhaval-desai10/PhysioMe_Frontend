@@ -46,62 +46,59 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      // First try the direct admin login endpoint
-      try {
-        const directLoginResponse = await apiAdminLogin.get("/login");
+      // ✅ Try admin login with POST
+      const directLoginResponse = await apiAdminLogin.get("/admin-login");
 
-        if (directLoginResponse.data.success) {
-          const { user: userData } = directLoginResponse.data.data;
-          const token = directLoginResponse.data.data.token;
+      if (directLoginResponse.data.success) {
+        const { user: userData, token } = directLoginResponse.data.data;
 
-          // Store token and user data
-          localStorage.setItem("token", token);
-          localStorage.setItem("user", JSON.stringify(userData));
-
-          // Set user state
-          setUser(userData);
-
-          toast.success("Admin login successful");
-          navigate("/admin/dashboard");
-          return;
-        }
-      } catch (directLoginError) {
-        console.log("Direct admin login failed, trying regular login");
-      }
-
-      // Fall back to regular login
-      const response = await api.post("/auth/login", { email, password });
-
-      if (response.data.success) {
-        const { token, user: userData } = response.data.data;
-
-        // Ensure the user is an admin
         if (userData.role !== "admin") {
           toast.error("Access denied. Admin privileges required.");
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
           setLoading(false);
           return;
         }
 
-        // Store token and user data
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(userData));
-
-        // Set user state
         setUser(userData);
-
         toast.success("Admin login successful");
         navigate("/admin/dashboard");
+        return;
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast.error(error.response?.data?.message || "Login failed");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-    } finally {
-      setLoading(false);
+    } catch (directLoginError) {
+      console.log("Direct admin login failed, trying regular login");
+
+      // Fallback to regular login
+      try {
+        const response = await apiAdminLogin.post("/auth/login", {
+          email,
+          password,
+        });
+
+        if (response.data.success) {
+          const { user: userData, token } = response.data.data;
+
+          if (userData.role !== "admin") {
+            toast.error("Access denied. Admin privileges required.");
+            setLoading(false);
+            return;
+          }
+
+          localStorage.setItem("token", token);
+          localStorage.setItem("user", JSON.stringify(userData));
+          setUser(userData);
+          toast.success("Admin login successful");
+          navigate("/admin/dashboard");
+        } else {
+          toast.error(response.data.message || "Login failed");
+        }
+      } catch (loginError) {
+        console.log("Login error:", loginError);
+        toast.error(loginError.response?.data?.message || "Login failed");
+      }
     }
+
+    setLoading(false);
   };
 
   return (
