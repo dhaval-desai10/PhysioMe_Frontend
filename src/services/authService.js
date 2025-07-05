@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/api/auth';
+const API_URL = 'https://physiome-backend.onrender.com/api/auth';
 
 export const registerUser = async (userData) => {
   try {

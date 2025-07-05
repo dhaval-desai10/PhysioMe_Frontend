@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://physiome-backend.onrender.com/api',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ export const therapistApi = {
 
     // Create a custom instance for this request to handle FormData
     const formDataInstance = axios.create({
-      baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
+      baseURL: import.meta.env.VITE_API_URL || 'https://physiome-backend.onrender.com/api',
       withCredentials: true,
       timeout: 60000, // 60 second timeout for uploads
     });

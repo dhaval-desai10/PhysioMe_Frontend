@@ -11,7 +11,7 @@ export function AuthProvider({ children }) {
   const location = useLocation();
 
   // Configure axios defaults
-  axios.defaults.baseURL = "http://localhost:8080/api";
+  axios.defaults.baseURL = "https://physiome-backend.onrender.com/api";
   axios.defaults.withCredentials = true;
 
   // Add request interceptor to include token
