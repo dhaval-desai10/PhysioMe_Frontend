@@ -46,11 +46,14 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      // ✅ Try admin login with GET
-      const directLoginResponse = await apiAdminLogin.get("/auth/admin-login");
+      // Use regular login for admin
+      const response = await apiAdminLogin.post("/auth/login", {
+        email,
+        password,
+      });
 
-      if (directLoginResponse.data.success) {
-        const { user: userData, token } = directLoginResponse.data.data;
+      if (response.data.success) {
+        const { user: userData, token } = response.data.data;
 
         if (userData.role !== "admin") {
           toast.error("Access denied. Admin privileges required.");
@@ -63,39 +66,14 @@ export default function AdminLogin() {
         setUser(userData);
         toast.success("Admin login successful");
         navigate("/admin/dashboard");
-        return;
+      } else {
+        toast.error(response.data.message || "Login failed");
       }
-    } catch (directLoginError) {
-      console.log("Direct admin login failed, trying regular login");
-
-      // Fallback to regular login
-      try {
-        const response = await apiAdminLogin.post("/auth/login", {
-          email,
-          password,
-        });
-
-        if (response.data.success) {
-          const { user: userData, token } = response.data.data;
-
-          if (userData.role !== "admin") {
-            toast.error("Access denied. Admin privileges required.");
-            setLoading(false);
-            return;
-          }
-
-          localStorage.setItem("token", token);
-          localStorage.setItem("user", JSON.stringify(userData));
-          setUser(userData);
-          toast.success("Admin login successful");
-          navigate("/admin/dashboard");
-        } else {
-          toast.error(response.data.message || "Login failed");
-        }
-      } catch (loginError) {
-        console.log("Login error:", loginError);
-        toast.error(loginError.response?.data?.message || "Login failed");
-      }
+    } catch (loginError) {
+      console.log("Login error:", loginError);
+      toast.error(
+        loginError.response?.data?.message || "Invalid admin credentials"
+      );
     }
 
     setLoading(false);
