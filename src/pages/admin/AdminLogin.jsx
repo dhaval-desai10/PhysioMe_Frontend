@@ -13,8 +13,8 @@ import { toast } from "react-hot-toast";
 import apiAdminLogin from "@/services/adminLogin";
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState("admin@gmail.com");
-  const [password, setPassword] = useState("123456");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setUser } = useAuth();
