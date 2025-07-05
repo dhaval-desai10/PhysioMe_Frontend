@@ -46,8 +46,8 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      // ✅ Try admin login with POST
-      const directLoginResponse = await apiAdminLogin.get("/admin-login");
+      // ✅ Try admin login with GET
+      const directLoginResponse = await apiAdminLogin.get("/auth/admin-login");
 
       if (directLoginResponse.data.success) {
         const { user: userData, token } = directLoginResponse.data.data;
