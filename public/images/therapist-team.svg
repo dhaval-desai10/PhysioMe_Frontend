@@ -1,0 +1,28 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="teamGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="2" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#teamGradient)" />
+  
+  <!-- Abstract representation of a team -->
+  <circle cx="250" cy="300" r="80" fill="rgba(255,255,255,0.2)" filter="url(#dropShadow)"/>
+  <circle cx="400" cy="250" r="100" fill="rgba(255,255,255,0.3)" filter="url(#dropShadow)"/>
+  <circle cx="550" cy="300" r="80" fill="rgba(255,255,255,0.2)" filter="url(#dropShadow)"/>
+
+  <text x="50%" y="50%" font-family="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" font-size="36" fill="white" text-anchor="middle" font-weight="bold" dy="-20px">Meet Our Dedicated Team</text>
+  <text x="50%" y="50%" font-family="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" font-size="18" fill="rgba(255,255,255,0.9)" text-anchor="middle" dy="20px">Experts in Physiotherapy Care</text>
+</svg>
