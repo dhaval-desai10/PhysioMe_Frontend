@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const apiAdminLogin = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'https://physiome-backend.onrender.com',
+    // baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
@@ -9,7 +10,7 @@ const apiAdminLogin = axios.create({
     timeout: 10000, // 10 second timeout
 });
 
-api.interceptors.response.use(
+apiAdminLogin.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {

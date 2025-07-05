@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { toast } from "react-hot-toast";
-import api from "../../services/api";
 import apiAdminLogin from "@/services/adminLogin";
 
 export default function AdminLogin() {
