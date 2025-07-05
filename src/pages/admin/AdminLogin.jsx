@@ -64,7 +64,14 @@ export default function AdminLogin() {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(userData));
         setUser(userData);
-        toast.success("Admin login successful");
+        toast.success("Admin login successful! Welcome to dashboard.", {
+          duration: 2000,
+          style: {
+            background: "#10b981",
+            color: "#fff",
+            fontWeight: "600",
+          },
+        });
         navigate("/admin/dashboard");
       } else {
         toast.error(response.data.message || "Login failed");

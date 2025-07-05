@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "./lib/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { Toaster } from "react-hot-toast";
 
 // Public Pages
 import Home from "./pages/Home";
@@ -292,12 +293,51 @@ function AppRoutes() {
 function App() {
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="flex flex-col min-h-screen bg-background">
         <Navbar />
         <main className="flex-1">
           <AppRoutes />
         </main>
         <Footer />
+
+        {/* Toast notifications */}
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
+          gutter={8}
+          containerClassName=""
+          containerStyle={{}}
+          toastOptions={{
+            // Define default options
+            className: "",
+            duration: 4000,
+            style: {
+              background: "#363636",
+              color: "#fff",
+              padding: "16px",
+              borderRadius: "8px",
+              fontSize: "14px",
+              fontWeight: "500",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+              zIndex: 9999,
+            },
+            // Default options for specific types
+            success: {
+              duration: 3000,
+              style: {
+                background: "#10b981",
+                color: "#fff",
+              },
+            },
+            error: {
+              duration: 4000,
+              style: {
+                background: "#ef4444",
+                color: "#fff",
+              },
+            },
+          }}
+        />
       </div>
     </AuthProvider>
   );

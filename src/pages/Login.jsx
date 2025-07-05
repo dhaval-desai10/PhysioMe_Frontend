@@ -30,7 +30,14 @@ export default function Login() {
 
     try {
       await login({ email, password });
-      toast.success("Login successful");
+      toast.success("Login successful! Welcome back.", {
+        duration: 2000,
+        style: {
+          background: "#10b981",
+          color: "#fff",
+          fontWeight: "600",
+        },
+      });
     } catch (error) {
       console.error("Login error:", error);
       // Handle specific error messages

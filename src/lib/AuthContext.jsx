@@ -109,15 +109,16 @@ export function AuthProvider({ children }) {
     try {
       const response = await axios.post("/auth/register", userData);
       if (response.data.success) {
-        // Store user data and token in localStorage (like login does)
-        const { token, user: userProfile } = response.data.data;
+        // For registration, we just return the user data but don't auto-login
+        // The user will need to login manually after registration
+        const responseData = response.data.data;
 
-        if (token) {
-          localStorage.setItem("token", token);
+        // Handle both old and new response formats
+        if (responseData.user) {
+          return responseData.user; // New format with token and user
+        } else {
+          return responseData; // Old format with just user data
         }
-        localStorage.setItem("user", JSON.stringify(userProfile));
-        setUser(userProfile);
-        return userProfile;
       } else {
         throw new Error(response.data.message || "Registration failed");
       }
