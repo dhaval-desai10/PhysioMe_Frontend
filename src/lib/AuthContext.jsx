@@ -77,8 +77,11 @@ export function AuthProvider({ children }) {
         localStorage.setItem("user", JSON.stringify(userData));
         setUser(userData);
 
-        // Redirect to appropriate dashboard if on login page
-        if (location.pathname.includes("/login")) {
+        // Only redirect if explicitly on a login page (not after registration)
+        if (
+          location.pathname === "/login" ||
+          location.pathname === "/admin/login"
+        ) {
           const dashboardPath =
             userData.role === "admin"
               ? "/admin/dashboard"
@@ -106,8 +109,12 @@ export function AuthProvider({ children }) {
     try {
       const response = await axios.post("/auth/register", userData);
       if (response.data.success) {
-        // Store user data in localStorage (like login does)
-        const userProfile = response.data.data;
+        // Store user data and token in localStorage (like login does)
+        const { token, user: userProfile } = response.data.data;
+
+        if (token) {
+          localStorage.setItem("token", token);
+        }
         localStorage.setItem("user", JSON.stringify(userProfile));
         setUser(userProfile);
         return userProfile;
