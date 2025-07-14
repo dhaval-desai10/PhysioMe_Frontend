@@ -121,6 +121,36 @@ export const adminApi = {
       return Promise.reject(new Error('Therapist ID is required'));
     }
     return api.put(`/admin/therapist-approvals/${id}/reject`);
+  },
+
+  deleteTherapist: (id) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return Promise.reject(new Error('Authentication required'));
+    }
+    if (!id) {
+      return Promise.reject(new Error('Therapist ID is required'));
+    }
+    // Use the universal user management route
+    return api.post(`/admin/users/${id}/manage`, {
+      action: 'DELETE',
+      userType: 'therapist'
+    });
+  },
+
+  deletePatient: (id) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return Promise.reject(new Error('Authentication required'));
+    }
+    if (!id) {
+      return Promise.reject(new Error('Patient ID is required'));
+    }
+    // Use the universal user management route
+    return api.post(`/admin/users/${id}/manage`, {
+      action: 'DELETE',
+      userType: 'patient'
+    });
   }
 };
 

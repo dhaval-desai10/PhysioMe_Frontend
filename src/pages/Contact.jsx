@@ -77,7 +77,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="bg-slate-900">
       {/* Hero Section */}
       <section className="relative min-h-[50vh] flex items-center overflow-hidden">
         {/* Dark background with gradient overlay */}

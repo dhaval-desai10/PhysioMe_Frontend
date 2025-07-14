@@ -262,7 +262,10 @@ const AdminDashboard = () => {
 
         {/* Enhanced Stats Cards */}
         <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="relative overflow-hidden transition-all duration-300 cursor-pointer bg-gradient-to-br from-blue-500/10 to-blue-600/20 border-blue-500/30 hover:shadow-2xl hover:scale-105 group">
+          <Card
+            className="relative overflow-hidden transition-all duration-300 cursor-pointer bg-gradient-to-br from-blue-500/10 to-blue-600/20 border-blue-500/30 hover:shadow-2xl hover:scale-105 group"
+            onClick={() => navigate("/admin/therapists")}
+          >
             <div className="absolute top-0 right-0 w-20 h-20 transition-all duration-300 rounded-bl-full bg-blue-500/10 group-hover:w-24 group-hover:h-24"></div>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-blue-300 transition-colors group-hover:text-blue-200">
@@ -279,15 +282,17 @@ const AdminDashboard = () => {
                     {stats.totalTherapists}
                   </span>
                   <span className="mt-1 text-xs text-blue-300/80">
-                    {stats.totalTherapists === 1 ? "Therapist" : "Therapists"}{" "}
-                    registered
+                    Click to manage
                   </span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="relative overflow-hidden transition-all duration-300 cursor-pointer bg-gradient-to-br from-yellow-500/10 to-yellow-600/20 border-yellow-500/30 hover:shadow-2xl hover:scale-105 group">
+          <Card
+            className="relative overflow-hidden transition-all duration-300 cursor-pointer bg-gradient-to-br from-yellow-500/10 to-yellow-600/20 border-yellow-500/30 hover:shadow-2xl hover:scale-105 group"
+            onClick={() => navigate("/admin/approvals")}
+          >
             <div className="absolute top-0 right-0 w-20 h-20 transition-all duration-300 rounded-bl-full bg-yellow-500/10 group-hover:w-24 group-hover:h-24"></div>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-yellow-300 transition-colors group-hover:text-yellow-200">
@@ -304,17 +309,17 @@ const AdminDashboard = () => {
                     {stats.pendingApprovals}
                   </span>
                   <span className="mt-1 text-xs text-yellow-300/80">
-                    {stats.pendingApprovals === 1
-                      ? "Application"
-                      : "Applications"}{" "}
-                    pending
+                    Click to review
                   </span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="relative overflow-hidden transition-all duration-300 cursor-pointer bg-gradient-to-br from-green-500/10 to-green-600/20 border-green-500/30 hover:shadow-2xl hover:scale-105 group">
+          <Card
+            className="relative overflow-hidden transition-all duration-300 cursor-pointer bg-gradient-to-br from-green-500/10 to-green-600/20 border-green-500/30 hover:shadow-2xl hover:scale-105 group"
+            onClick={() => navigate("/admin/patients")}
+          >
             <div className="absolute top-0 right-0 w-20 h-20 transition-all duration-300 rounded-bl-full bg-green-500/10 group-hover:w-24 group-hover:h-24"></div>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-green-300 transition-colors group-hover:text-green-200">
@@ -331,15 +336,17 @@ const AdminDashboard = () => {
                     {stats.totalPatients}
                   </span>
                   <span className="mt-1 text-xs text-green-300/80">
-                    {stats.totalPatients === 1 ? "Patient" : "Patients"}{" "}
-                    registered
+                    Click to manage
                   </span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="relative overflow-hidden transition-all duration-300 cursor-pointer bg-gradient-to-br from-purple-500/10 to-purple-600/20 border-purple-500/30 hover:shadow-2xl hover:scale-105 group">
+          <Card
+            className="relative overflow-hidden transition-all duration-300 cursor-pointer bg-gradient-to-br from-purple-500/10 to-purple-600/20 border-purple-500/30 hover:shadow-2xl hover:scale-105 group"
+            onClick={() => navigate("/admin/appointments")}
+          >
             <div className="absolute top-0 right-0 w-20 h-20 transition-all duration-300 rounded-bl-full bg-purple-500/10 group-hover:w-24 group-hover:h-24"></div>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-purple-300 transition-colors group-hover:text-purple-200">
@@ -356,10 +363,7 @@ const AdminDashboard = () => {
                     {stats.activeAppointments}
                   </span>
                   <span className="mt-1 text-xs text-purple-300/80">
-                    {stats.activeAppointments === 1
-                      ? "Appointment"
-                      : "Appointments"}{" "}
-                    active
+                    Click to view
                   </span>
                 </div>
               </div>
@@ -421,125 +425,89 @@ const AdminDashboard = () => {
 
           {/* Enhanced Therapist List */}
           {activeTab === "therapists" && (
-            <div className="space-y-6">
+            <div className="space-y-3">
               {filteredTherapists.length > 0 ? (
-                filteredTherapists.map((therapist) => (
+                filteredTherapists.slice(0, 3).map((therapist) => (
                   <Card
                     key={therapist._id}
-                    className="group overflow-hidden transition-all duration-300 bg-gradient-to-r from-card to-card/50 border-2 border-primary/20 hover:border-primary/40 hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1"
+                    className="group overflow-hidden transition-all duration-300 bg-gradient-to-r from-card to-card/50 border border-primary/20 hover:border-primary/40 hover:shadow-lg hover:scale-[1.01]"
                   >
-                    <CardContent className="p-0">
-                      <div className="p-8">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-6">
-                            <div className="relative">
-                              <Avatar className="w-16 h-16 border-4 shadow-lg border-primary/30">
-                                <AvatarImage
-                                  src={therapist.profilePicture}
-                                  alt={therapist.name}
-                                />
-                                <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-primary/20 to-primary/40 text-primary">
-                                  {therapist.name?.charAt(0)}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="absolute w-6 h-6 bg-green-500 border-2 rounded-full -bottom-1 -right-1 border-card"></div>
-                            </div>
-                            <div>
-                              <h3 className="mb-1 text-2xl font-bold text-foreground">
-                                {therapist.name}
-                              </h3>
-                              <p className="text-lg font-medium text-primary/80">
-                                {therapist.specialization}
-                              </p>
-                              <p className="mt-1 text-sm text-muted-foreground">
-                                {therapist.email}
-                              </p>
-                            </div>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="w-10 h-10 border-2 border-primary/30">
+                            <AvatarImage
+                              src={therapist.profilePicture}
+                              alt={therapist.name}
+                            />
+                            <AvatarFallback className="text-sm font-bold bg-gradient-to-br from-primary/20 to-primary/40 text-primary">
+                              {therapist.name?.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h3 className="text-lg font-semibold text-foreground">
+                              {therapist.name}
+                            </h3>
+                            <p className="text-sm text-primary/80">
+                              {therapist.specialization}
+                            </p>
                           </div>
-                          <div className="flex items-center space-x-4">
-                            <Badge
-                              variant={
-                                therapist.status === "approved"
-                                  ? "default"
-                                  : therapist.status === "rejected"
-                                  ? "destructive"
-                                  : "secondary"
-                              }
-                              className={`px-4 py-2 text-sm font-semibold ${
-                                therapist.status === "approved"
-                                  ? "bg-green-500/20 text-green-400 border-green-500/30"
-                                  : therapist.status === "rejected"
-                                  ? "bg-red-500/20 text-red-400 border-red-500/30"
-                                  : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
-                              }`}
-                            >
-                              {therapist.status?.charAt(0).toUpperCase() +
-                                therapist.status?.slice(1)}
-                            </Badge>
-                            <Button
-                              variant="default"
-                              size="lg"
-                              onClick={() =>
-                                navigate(`/admin/therapists/${therapist._id}`)
-                              }
-                              className="relative px-6 py-3 overflow-hidden text-white transition-all duration-300 transform border-0 shadow-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 hover:shadow-2xl group-hover:scale-110 hover:scale-105"
-                            >
-                              <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-r from-white/20 to-transparent hover:opacity-100"></div>
-                              <div className="relative flex items-center">
-                                <svg
-                                  className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-12"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                  />
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                  />
-                                </svg>
-                                <span className="font-semibold">
-                                  View Details
-                                </span>
-                                <svg
-                                  className="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M9 5l7 7-7 7"
-                                  />
-                                </svg>
-                              </div>
-                            </Button>
-                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <Badge
+                            variant={
+                              therapist.status === "approved"
+                                ? "default"
+                                : therapist.status === "rejected"
+                                ? "destructive"
+                                : "secondary"
+                            }
+                            className={`px-3 py-1 text-xs ${
+                              therapist.status === "approved"
+                                ? "bg-green-500/20 text-green-400 border-green-500/30"
+                                : therapist.status === "rejected"
+                                ? "bg-red-500/20 text-red-400 border-red-500/30"
+                                : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+                            }`}
+                          >
+                            {therapist.status?.charAt(0).toUpperCase() +
+                              therapist.status?.slice(1)}
+                          </Badge>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              navigate(`/admin/therapists/${therapist._id}`)
+                            }
+                            className="px-3 py-1 text-xs"
+                          >
+                            View
+                          </Button>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
                 ))
               ) : (
-                <div className="py-20 text-center border-2 border-dashed bg-gradient-to-br from-card/50 to-primary/5 rounded-2xl border-primary/20">
-                  <div className="p-6 mx-auto mb-6 rounded-full bg-primary/5 w-fit">
-                    <FaUserMd className="text-6xl text-primary/60" />
-                  </div>
-                  <h3 className="mb-2 text-2xl font-semibold text-foreground">
+                <div className="py-12 text-center border-2 border-dashed bg-gradient-to-br from-card/50 to-primary/5 rounded-xl border-primary/20">
+                  <FaUserMd className="text-4xl text-primary/60 mx-auto mb-3" />
+                  <h3 className="text-lg font-semibold text-foreground mb-1">
                     No therapists found
                   </h3>
-                  <p className="text-lg text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     Start by approving some therapist applications
                   </p>
+                </div>
+              )}
+              {filteredTherapists.length > 3 && (
+                <div className="text-center pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate("/admin/therapists")}
+                    className="px-6"
+                  >
+                    View All {filteredTherapists.length} Therapists
+                  </Button>
                 </div>
               )}
             </div>
@@ -547,134 +515,87 @@ const AdminDashboard = () => {
 
           {/* Enhanced Patient List */}
           {activeTab === "patients" && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold text-transparent bg-gradient-to-r from-primary to-primary/70 bg-clip-text">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-primary to-primary/70 bg-clip-text">
                   Registered Patients
                 </h2>
-                <div className="relative">
-                  <Search className="absolute transform -translate-y-1/2 left-4 top-1/2 text-primary/60" />
-                  <Input
-                    type="text"
-                    placeholder="Search patients..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="py-3 pl-12 pr-4 text-lg transition-all duration-300 border-2 w-80 border-primary/30 bg-background/50 text-foreground rounded-xl focus:border-primary/60 focus:ring-2 focus:ring-primary/20"
-                  />
-                </div>
               </div>
-              <div className="grid gap-6">
-                {filteredPatients.map((patient) => (
+              <div className="space-y-3">
+                {filteredPatients.slice(0, 3).map((patient) => (
                   <Card
                     key={patient._id}
-                    className="group overflow-hidden transition-all duration-300 bg-gradient-to-r from-card to-card/50 border-2 border-primary/20 hover:border-primary/40 hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1"
+                    className="group overflow-hidden transition-all duration-300 bg-gradient-to-r from-card to-card/50 border border-primary/20 hover:border-primary/40 hover:shadow-lg hover:scale-[1.01]"
                   >
-                    <CardContent className="p-8">
+                    <CardContent className="p-4">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-6">
-                          <div className="relative">
-                            <Avatar className="w-16 h-16 border-4 shadow-lg border-primary/30">
-                              <AvatarImage
-                                src={patient.profilePicture}
-                                alt={patient.name}
-                              />
-                              <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-primary/20 to-primary/40 text-primary">
-                                {patient.name?.charAt(0)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="absolute w-6 h-6 bg-blue-500 border-2 rounded-full -bottom-1 -right-1 border-card"></div>
-                          </div>
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="w-10 h-10 border-2 border-primary/30">
+                            <AvatarImage
+                              src={patient.profilePicture}
+                              alt={patient.name}
+                            />
+                            <AvatarFallback className="text-sm font-bold bg-gradient-to-br from-primary/20 to-primary/40 text-primary">
+                              {patient.name?.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
                           <div>
-                            <h3 className="mb-1 text-2xl font-bold text-foreground">
+                            <h3 className="text-lg font-semibold text-foreground">
                               {patient.name}
                             </h3>
-                            <p className="mb-2 text-lg text-muted-foreground">
+                            <p className="text-sm text-muted-foreground">
                               {patient.email}
                             </p>
-                            <div className="flex items-center mt-2 space-x-3">
+                            <div className="flex items-center mt-1 space-x-2">
                               <Badge
                                 variant="outline"
-                                className="px-3 py-1 text-blue-400 bg-blue-500/10 border-blue-500/30"
+                                className="px-2 py-0 text-xs text-blue-400 bg-blue-500/10 border-blue-500/30"
                               >
                                 {patient.gender}
                               </Badge>
                               <Badge
                                 variant="outline"
-                                className="px-3 py-1 text-green-400 bg-green-500/10 border-green-500/30"
+                                className="px-2 py-0 text-xs text-green-400 bg-green-500/10 border-green-500/30"
                               >
                                 {patient.age} years
                               </Badge>
-                              {patient.medicalHistory && (
-                                <Badge
-                                  variant="outline"
-                                  className="max-w-[250px] truncate bg-orange-500/10 border-orange-500/30 text-orange-400 px-3 py-1"
-                                >
-                                  {patient.medicalHistory}
-                                </Badge>
-                              )}
                             </div>
                           </div>
                         </div>
                         <Button
-                          variant="default"
-                          size="lg"
+                          variant="outline"
+                          size="sm"
                           onClick={() =>
                             navigate(`/admin/patients/${patient._id}`)
                           }
-                          className="relative px-6 py-3 overflow-hidden text-white transition-all duration-300 transform border-0 shadow-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 hover:shadow-2xl group-hover:scale-110 hover:scale-105"
+                          className="px-3 py-1 text-xs"
                         >
-                          <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-r from-white/20 to-transparent hover:opacity-100"></div>
-                          <div className="relative flex items-center">
-                            <svg
-                              className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-12"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                              />
-                            </svg>
-                            <span className="font-semibold">View Details</span>
-                            <svg
-                              className="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          </div>
+                          View
                         </Button>
                       </div>
                     </CardContent>
                   </Card>
                 ))}
                 {filteredPatients.length === 0 && (
-                  <div className="py-20 text-center border-2 border-dashed bg-gradient-to-br from-card/50 to-primary/5 rounded-2xl border-primary/20">
-                    <div className="p-6 mx-auto mb-6 rounded-full bg-primary/5 w-fit">
-                      <FaUserInjured className="text-6xl text-primary/60" />
-                    </div>
-                    <h3 className="mb-2 text-2xl font-semibold text-foreground">
+                  <div className="py-12 text-center border-2 border-dashed bg-gradient-to-br from-card/50 to-primary/5 rounded-xl border-primary/20">
+                    <FaUserInjured className="text-4xl text-primary/60 mx-auto mb-3" />
+                    <h3 className="text-lg font-semibold text-foreground mb-1">
                       No patients found
                     </h3>
-                    <p className="text-lg text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       No patients found matching your search criteria.
                     </p>
+                  </div>
+                )}
+                {filteredPatients.length > 3 && (
+                  <div className="text-center pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => navigate("/admin/patients")}
+                      className="px-6"
+                    >
+                      View All {filteredPatients.length} Patients
+                    </Button>
                   </div>
                 )}
               </div>

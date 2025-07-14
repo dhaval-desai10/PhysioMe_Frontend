@@ -10,19 +10,32 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [scrollDirection, setScrollDirection] = useState("up");
+  const [lastScrollY, setLastScrollY] = useState(0);
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
-  // Simplified scroll event listener
+  // Enhanced scroll event listener with direction detection
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
+      const currentScrollY = window.scrollY;
+
+      setScrolled(currentScrollY > 10);
+
+      // Detect scroll direction
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setScrollDirection("down");
+      } else {
+        setScrollDirection("up");
+      }
+
+      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   // Add outside click functionality to close dropdown
   useEffect(() => {
@@ -82,7 +95,14 @@ export default function Navbar() {
   return (
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      animate={{
+        y:
+          scrollDirection === "down" && scrolled && lastScrollY > 200
+            ? -100
+            : 0,
+        opacity:
+          scrollDirection === "down" && scrolled && lastScrollY > 200 ? 0 : 1,
+      }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className={`fixed top-0 z-50 w-full transition-all duration-500 ${
         scrolled

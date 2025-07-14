@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "./lib/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import CustomCursor from "./components/CustomCursor";
 import { Toaster } from "react-hot-toast";
 
 // Public Pages
@@ -50,6 +51,9 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import TherapistApprovals from "./pages/admin/TherapistApprovals";
 import TherapistDetails from "./pages/admin/TherapistDetails";
 import PatientDetails from "./pages/admin/PatientDetails";
+import TherapistManagement from "./pages/admin/TherapistManagement";
+import PatientManagement from "./pages/admin/PatientManagement";
+import AppointmentManagement from "./pages/admin/AppointmentManagement";
 import LoadingScreen from "./components/LoadingScreen";
 
 function AppRoutes() {
@@ -260,10 +264,34 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/admin/therapists"
+        path="/admin/approvals"
         element={
           <ProtectedRoute allowedRoles={["admin"]}>
             <TherapistApprovals />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/therapists"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <TherapistManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/patients"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <PatientManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/appointments"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AppointmentManagement />
           </ProtectedRoute>
         }
       />
@@ -295,10 +323,11 @@ function App() {
     <AuthProvider>
       <div className="flex flex-col min-h-screen bg-background">
         <Navbar />
-        <main className="flex-1">
+        <main className="flex-1 pt-16">
           <AppRoutes />
         </main>
         <Footer />
+        <CustomCursor />
 
         {/* Toast notifications */}
         <Toaster

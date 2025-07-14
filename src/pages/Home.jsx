@@ -13,6 +13,13 @@ import {
 import { useAuth } from "../lib/AuthContext";
 import { useState, useEffect } from "react";
 import api from "../lib/api";
+import { gsap } from "gsap";
+import {
+  useScrollAnimation,
+  useStaggerAnimation,
+  useParallaxEffect,
+  useCountUpAnimation,
+} from "../hooks/useScrollAnimations";
 
 const fallbackTherapists = [
   {
@@ -45,6 +52,23 @@ export default function Home() {
   const { isAuthenticated, user } = useAuth();
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [therapists, setTherapists] = useState([]);
+
+  // Scroll animation hooks
+  const heroParallax = useParallaxEffect(0.3);
+  const featuresAnimation = useStaggerAnimation({
+    threshold: 0.2,
+    stagger: 0.15,
+    from: { opacity: 0, y: 60, scale: 0.8 },
+    to: { opacity: 1, y: 0, scale: 1 },
+    duration: 0.8,
+  });
+  const servicesAnimation = useStaggerAnimation({
+    threshold: 0.15,
+    stagger: 0.2,
+    from: { opacity: 0, x: -50, rotationY: -15 },
+    to: { opacity: 1, x: 0, rotationY: 0 },
+    duration: 1,
+  });
 
   useEffect(() => {
     const fetchTherapists = async () => {
@@ -138,7 +162,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="bg-slate-900">
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         {/* Dark background with gradient overlay */}
@@ -193,31 +217,67 @@ export default function Home() {
               >
                 Professional Physiotherapy Care
               </motion.span>
-              <h1 className="mb-6 text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
+              <motion.h1
+                className="mb-6 text-4xl font-bold leading-tight sm:text-5xl md:text-6xl"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
+              >
                 Your Journey to{" "}
-                <span className="italic text-white/90">Better Health</span>{" "}
+                <motion.span
+                  className="italic text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-teal-300 to-green-400"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1, duration: 1 }}
+                >
+                  Better Health
+                </motion.span>{" "}
                 Starts Here
-              </h1>
-              <p className="max-w-xl mb-8 text-xl text-white/90">
+              </motion.h1>
+              <motion.p
+                className="max-w-xl mb-8 text-xl text-white/90"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7, duration: 0.6 }}
+              >
                 Experience expert physiotherapy care tailored to your unique
                 needs. We're here to help you move better, feel better, and live
                 better.
-              </p>
-              <div className="relative z-10 flex flex-wrap gap-4">
+              </motion.p>
+              <motion.div
+                className="relative z-10 flex flex-wrap gap-4"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9, duration: 0.6 }}
+              >
                 {isAuthenticated && user?.role === "patient" ? (
                   <motion.div
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{
+                      scale: 1.05,
+                      boxShadow: "0 10px 40px rgba(59, 130, 246, 0.3)",
+                    }}
                     whileTap={{ scale: 0.95 }}
                     className="relative z-20"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1.1, duration: 0.5 }}
                   >
                     <Button
                       size="lg"
-                      className="relative z-30 bg-white shadow-lg cursor-pointer text-primary hover:bg-white/90"
+                      className="relative z-30 bg-gradient-to-r from-white to-blue-50 shadow-xl cursor-pointer text-primary hover:shadow-2xl transition-all duration-300 border border-white/20"
                       asChild
                     >
-                      <Link to="/patient/dashboard" className="relative z-40">
+                      <Link
+                        to="/patient/dashboard"
+                        className="relative z-40 flex items-center"
+                      >
                         Book Appointment
-                        <ArrowRight className="w-5 h-5 ml-2" />
+                        <motion.div
+                          animate={{ x: [0, 5, 0] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        >
+                          <ArrowRight className="w-5 h-5 ml-2" />
+                        </motion.div>
                       </Link>
                     </Button>
                   </motion.div>
@@ -274,7 +334,7 @@ export default function Home() {
                     </Button>
                   </Link>
                 </motion.div>
-              </div>
+              </motion.div>
             </motion.div>
 
             <motion.div
@@ -338,26 +398,63 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                className="p-8 transition-all duration-300 border shadow-lg bg-slate-900/50 backdrop-blur-sm rounded-xl border-slate-700/50 hover:shadow-xl hover:border-primary/30 hover:bg-slate-800/60"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -5 }}
-              >
-                <div className="inline-block p-4 mb-6 border rounded-full bg-primary/20 border-primary/30">
-                  <div className="text-primary">{feature.icon}</div>
+          <div
+            ref={featuresAnimation.ref}
+            className="grid grid-cols-1 gap-8 md:grid-cols-3"
+          >
+            <div ref={featuresAnimation.containerRef} className="contents">
+              {features.map((feature, index) => (
+                <div
+                  key={index}
+                  className="group p-8 transition-all duration-500 border shadow-lg bg-slate-900/50 backdrop-blur-sm rounded-xl border-slate-700/50 hover:shadow-2xl hover:border-primary/50 hover:bg-slate-800/80 cursor-pointer"
+                  onMouseEnter={(e) => {
+                    const card = e.currentTarget;
+                    const icon = card.querySelector(".feature-icon");
+                    gsap.to(card, {
+                      scale: 1.05,
+                      duration: 0.3,
+                      ease: "power2.out",
+                    });
+                    gsap.to(icon, {
+                      scale: 1.2,
+                      rotation: 360,
+                      duration: 0.5,
+                      ease: "back.out(1.7)",
+                    });
+                  }}
+                  onMouseLeave={(e) => {
+                    const card = e.currentTarget;
+                    const icon = card.querySelector(".feature-icon");
+                    gsap.to(card, {
+                      scale: 1,
+                      duration: 0.3,
+                      ease: "power2.out",
+                    });
+                    gsap.to(icon, {
+                      scale: 1,
+                      rotation: 0,
+                      duration: 0.3,
+                      ease: "power2.out",
+                    });
+                  }}
+                >
+                  <div className="inline-block p-4 mb-6 border rounded-full bg-primary/20 border-primary/30 group-hover:bg-primary/30 transition-all duration-300">
+                    <div className="text-primary feature-icon">
+                      {feature.icon}
+                    </div>
+                  </div>
+                  <h3 className="mb-3 text-xl font-semibold text-white group-hover:text-primary transition-colors duration-300">
+                    {feature.title}
+                  </h3>
+                  <p className="text-slate-300 group-hover:text-slate-200 transition-colors duration-300">
+                    {feature.description}
+                  </p>
+
+                  {/* Animated background gradient */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl bg-gradient-to-br from-primary/5 via-blue-500/5 to-teal-500/5"></div>
                 </div>
-                <h3 className="mb-3 text-xl font-semibold text-white">
-                  {feature.title}
-                </h3>
-                <p className="text-slate-300">{feature.description}</p>
-              </motion.div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -389,31 +486,89 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {services.map((service, index) => (
-              <motion.div
-                key={index}
-                className="relative p-8 overflow-hidden transition-all duration-300 border shadow-lg bg-slate-800/60 backdrop-blur-sm rounded-xl border-slate-700/50 hover:shadow-xl group hover:border-primary/30"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -5 }}
-              >
-                <div className="absolute top-0 right-0 w-24 h-24 transition-colors duration-300 rounded-bl-full bg-primary/10 -z-10 group-hover:bg-primary/20"></div>
-                <div className="mb-6">{service.icon}</div>
-                <h3 className="mb-3 text-xl font-semibold text-white">
-                  {service.title}
-                </h3>
-                <p className="mb-6 text-slate-300">{service.description}</p>
-                <Link
-                  to={service.link}
-                  className="inline-flex items-center font-medium transition-colors text-primary hover:text-blue-400"
+          <div
+            ref={servicesAnimation.ref}
+            className="grid grid-cols-1 gap-8 md:grid-cols-3"
+          >
+            <div ref={servicesAnimation.containerRef} className="contents">
+              {services.map((service, index) => (
+                <div
+                  key={index}
+                  className="relative group p-8 overflow-hidden transition-all duration-500 border shadow-lg bg-slate-800/60 backdrop-blur-sm rounded-xl border-slate-700/50 hover:shadow-2xl hover:border-primary/50 cursor-pointer"
+                  onMouseEnter={(e) => {
+                    const card = e.currentTarget;
+                    const icon = card.querySelector(".service-icon");
+                    const bg = card.querySelector(".service-bg");
+                    gsap.to(card, {
+                      scale: 1.03,
+                      rotationY: 5,
+                      z: 50,
+                      duration: 0.4,
+                      ease: "power2.out",
+                      transformPerspective: 1000,
+                    });
+                    gsap.to(icon, {
+                      scale: 1.1,
+                      rotation: 10,
+                      duration: 0.3,
+                      ease: "back.out(1.7)",
+                    });
+                    gsap.to(bg, {
+                      scale: 1.5,
+                      opacity: 0.3,
+                      duration: 0.4,
+                    });
+                  }}
+                  onMouseLeave={(e) => {
+                    const card = e.currentTarget;
+                    const icon = card.querySelector(".service-icon");
+                    const bg = card.querySelector(".service-bg");
+                    gsap.to(card, {
+                      scale: 1,
+                      rotationY: 0,
+                      z: 0,
+                      duration: 0.4,
+                      ease: "power2.out",
+                    });
+                    gsap.to(icon, {
+                      scale: 1,
+                      rotation: 0,
+                      duration: 0.3,
+                    });
+                    gsap.to(bg, {
+                      scale: 1,
+                      opacity: 0.1,
+                      duration: 0.4,
+                    });
+                  }}
                 >
-                  Learn more <ArrowUpRight className="w-4 h-4 ml-2" />
-                </Link>
-              </motion.div>
-            ))}
+                  <div className="absolute top-0 right-0 w-24 h-24 transition-all duration-500 rounded-bl-full bg-primary/10 service-bg group-hover:bg-primary/20"></div>
+                  <div className="mb-6 service-icon transform-gpu">
+                    {service.icon}
+                  </div>
+                  <h3 className="mb-3 text-xl font-semibold text-white group-hover:text-primary transition-colors duration-300">
+                    {service.title}
+                  </h3>
+                  <p className="mb-6 text-slate-300 group-hover:text-slate-200 transition-colors duration-300">
+                    {service.description}
+                  </p>
+                  <Link
+                    to={service.link}
+                    className="inline-flex items-center font-medium transition-all duration-300 text-primary hover:text-blue-400 group-hover:translate-x-2"
+                  >
+                    Learn more
+                    <div className="ml-2 transform transition-transform duration-300 group-hover:translate-x-1 group-hover:scale-110">
+                      <ArrowUpRight className="w-4 h-4" />
+                    </div>
+                  </Link>
+
+                  {/* Animated border */}
+                  <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/20 via-blue-500/20 to-teal-500/20 animate-pulse"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

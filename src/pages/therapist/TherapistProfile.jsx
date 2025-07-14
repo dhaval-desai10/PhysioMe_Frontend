@@ -341,7 +341,7 @@ export default function TherapistProfile() {
   }
 
   return (
-    <div className="min-h-screen py-6 bg-gray-900">
+    <div className="py-6 bg-gray-900">
       <div className="container px-4 mx-auto">
         <div className="max-w-4xl mx-auto">
           {/* Header Section */}
