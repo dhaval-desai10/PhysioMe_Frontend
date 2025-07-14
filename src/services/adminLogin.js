@@ -6,9 +6,8 @@ const apiAdminLogin = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 10000, // 10 second timeout
+    timeout: 10000, 
 });
-
 apiAdminLogin.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -31,5 +30,4 @@ apiAdminLogin.interceptors.response.use(
         return Promise.reject(error);
     }
 );
-
 export default apiAdminLogin;
