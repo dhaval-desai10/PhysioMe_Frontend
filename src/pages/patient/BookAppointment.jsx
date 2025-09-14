@@ -129,15 +129,6 @@ export default function BookAppointment() {
       // Debug user authentication
       const token = localStorage.getItem("token");
       const userStr = localStorage.getItem("user");
-      console.log("Token exists:", !!token);
-      console.log(
-        "Token preview:",
-        token ? token.substring(0, 20) + "..." : "none"
-      );
-      console.log(
-        "User from localStorage:",
-        userStr ? JSON.parse(userStr) : "none"
-      );
 
       const appointmentData = {
         physiotherapistId: therapistId,
@@ -148,18 +139,13 @@ export default function BookAppointment() {
         notes: notes.trim() || undefined,
       };
 
-      console.log("Sending appointment data:", appointmentData);
-
       try {
         const response = await patientApi.createAppointment(
           appointmentData
         );
-        console.log("Booking response:", response);
 
         // If we get here, the appointment was successfully created
         if (response.data.success) {
-          console.log("Appointment booking successful");
-
           // Set success state immediately
           setBookingSuccess(true);
 
@@ -234,9 +220,6 @@ export default function BookAppointment() {
         }
 
         // For other errors, check if appointment might have been created
-        console.log(
-          "Checking if appointment was created despite error..."
-        );
 
         // Small delay then check if appointment exists
         setTimeout(async () => {
@@ -263,9 +246,6 @@ export default function BookAppointment() {
             );
 
             if (matchingAppointment) {
-              console.log(
-                "Appointment was successfully created despite API error"
-              );
               setBookingSuccess(true);
               toast.success(
                 "🎉 Appointment booked successfully! Redirecting to your appointments...",
