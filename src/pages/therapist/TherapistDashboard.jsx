@@ -81,14 +81,14 @@ export default function TherapistDashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="py-8 bg-gradient-to-br from-slate-900 via-blue-900/50 to-slate-900">
+    <div className="min-h-screen py-8 bg-gradient-to-br from-slate-900 via-blue-900/50 to-slate-900">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">

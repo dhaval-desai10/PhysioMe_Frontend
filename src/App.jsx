@@ -8,7 +8,6 @@ import { AuthProvider, useAuth } from "./lib/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import CustomCursor from "./components/CustomCursor";
 import { Toaster } from "react-hot-toast";
 
 // Public Pages
@@ -74,12 +73,18 @@ function AppRoutes() {
       <Route path="/register" element={<Register />} />
 
       {/* Service Pages */}
-      <Route path="/services/physical-therapy" element={<PhysicalTherapy />} />
+      <Route
+        path="/services/physical-therapy"
+        element={<PhysicalTherapy />}
+      />
       <Route
         path="/services/sports-rehabilitation"
         element={<SportsRehabilitation />}
       />
-      <Route path="/services/manual-therapy" element={<ManualTherapy />} />
+      <Route
+        path="/services/manual-therapy"
+        element={<ManualTherapy />}
+      />
 
       {/* Protected Patient Routes */}
       <Route
@@ -327,7 +332,6 @@ function App() {
           <AppRoutes />
         </main>
         <Footer />
-        <CustomCursor />
 
         {/* Toast notifications */}
         <Toaster

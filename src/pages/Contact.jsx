@@ -13,6 +13,7 @@ import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { Label } from "../components/ui/label";
 import { useState } from "react";
+import { contact } from "../lib/api";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -40,20 +41,9 @@ export default function Contact() {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch(
-        "https://physiome-backend.onrender.com/api/contact",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await contact.sendMessage(formData);
 
-      const data = await response.json();
-
-      if (response.ok && data.success) {
+      if (response.data.success) {
         setSubmitStatus("success");
         // Reset form
         setFormData({
@@ -66,10 +56,14 @@ export default function Contact() {
         });
       } else {
         setSubmitStatus("error");
-        console.error("Form submission error:", data.message);
+        console.error(
+          "Form submission error:",
+          response.data.message
+        );
       }
     } catch (error) {
       console.error("Network error:", error);
+      console.error("Error details:", error.response?.data);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
@@ -77,7 +71,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="bg-slate-900">
+    <div className="min-h-screen bg-slate-900">
       {/* Hero Section */}
       <section className="relative min-h-[50vh] flex items-center overflow-hidden">
         {/* Dark background with gradient overlay */}
@@ -88,22 +82,30 @@ export default function Contact() {
         <div className="absolute inset-0">
           <motion.div
             animate={{ y: [-20, 20, -20], rotate: [0, 10, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-20 left-32 w-16 h-16 bg-primary/20 rounded-lg backdrop-blur-sm border border-primary/30"
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute w-16 h-16 border rounded-lg top-20 left-32 bg-primary/20 backdrop-blur-sm border-primary/30"
           />
           <motion.div
             animate={{ y: [20, -20, 20], rotate: [0, -10, 0] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute bottom-20 right-32 w-12 h-12 bg-blue-400/20 rounded-full backdrop-blur-sm border border-blue-400/30"
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute w-12 h-12 border rounded-full bottom-20 right-32 bg-blue-400/20 backdrop-blur-sm border-blue-400/30"
           />
         </div>
 
-        <div className="container relative z-20 mx-auto px-4">
+        <div className="container relative z-20 px-4 mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto text-white"
+            className="max-w-3xl mx-auto text-center text-white"
           >
             <motion.span
               className="inline-block px-4 py-2 mb-6 text-sm font-medium text-white rounded-full bg-white/10 backdrop-blur-sm"
@@ -113,55 +115,67 @@ export default function Contact() {
             >
               Get In Touch
             </motion.span>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Contact Us</h1>
-            <p className="text-lg text-white/90 mb-8">
-              Have questions or need assistance? We're here to help. Reach out
-              to us through any of the following channels or fill out the
-              contact form below.
+            <h1 className="mb-6 text-4xl font-bold md:text-5xl">
+              Contact Us
+            </h1>
+            <p className="mb-8 text-lg text-white/90">
+              Have questions or need assistance? We're here to help.
+              Reach out to us through any of the following channels or
+              fill out the contact form below.
             </p>
           </motion.div>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 py-20">
-        <div className="grid md:grid-cols-2 gap-12">
+      <div className="container px-4 py-20 mx-auto">
+        <div className="grid gap-12 md:grid-cols-2">
           {/* Contact Information */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="p-8 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm"
+            className="p-8 border rounded-lg border-white/20 bg-white/5 backdrop-blur-sm"
           >
-            <h2 className="text-2xl font-bold mb-8 text-white">Get in Touch</h2>
+            <h2 className="mb-8 text-2xl font-bold text-white">
+              Get in Touch
+            </h2>
             <div className="space-y-6">
               <div className="flex items-start space-x-4">
-                <div className="h-10 w-10 rounded-lg bg-primary/20 backdrop-blur-sm border border-primary/30 flex items-center justify-center flex-shrink-0">
-                  <Mail className="h-5 w-5 text-primary" />
+                <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 border rounded-lg bg-primary/20 backdrop-blur-sm border-primary/30">
+                  <Mail className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1 text-white">Email</h3>
-                  <p className="text-white/80">support@physiome.com</p>
+                  <h3 className="mb-1 font-semibold text-white">
+                    Email
+                  </h3>
+                  <p className="text-white/80">
+                    support@physiome.com
+                  </p>
                   <p className="text-white/80">info@physiome.com</p>
                 </div>
               </div>
 
               <div className="flex items-start space-x-4">
-                <div className="h-10 w-10 rounded-lg bg-primary/20 backdrop-blur-sm border border-primary/30 flex items-center justify-center flex-shrink-0">
-                  <Phone className="h-5 w-5 text-primary" />
+                <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 border rounded-lg bg-primary/20 backdrop-blur-sm border-primary/30">
+                  <Phone className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1 text-white">Phone</h3>
+                  <h3 className="mb-1 font-semibold text-white">
+                    Phone
+                  </h3>
                   <p className="text-white/80">+1 (555) 123-4567</p>
                   <p className="text-white/80">+1 (555) 987-6543</p>
                 </div>
               </div>
 
               <div className="flex items-start space-x-4">
-                <div className="h-10 w-10 rounded-lg bg-primary/20 backdrop-blur-sm border border-primary/30 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="h-5 w-5 text-primary" />
+                <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 border rounded-lg bg-primary/20 backdrop-blur-sm border-primary/30">
+                  <MapPin className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1 text-white">Address</h3>
+                  <h3 className="mb-1 font-semibold text-white">
+                    Address
+                  </h3>
                   <p className="text-white/80">
                     123 Health Street
                     <br />
@@ -173,17 +187,19 @@ export default function Contact() {
               </div>
 
               <div className="flex items-start space-x-4">
-                <div className="h-10 w-10 rounded-lg bg-primary/20 backdrop-blur-sm border border-primary/30 flex items-center justify-center flex-shrink-0">
-                  <Clock className="h-5 w-5 text-primary" />
+                <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 border rounded-lg bg-primary/20 backdrop-blur-sm border-primary/30">
+                  <Clock className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1 text-white">
+                  <h3 className="mb-1 font-semibold text-white">
                     Business Hours
                   </h3>
                   <p className="text-white/80">
                     Monday - Friday: 9:00 AM - 6:00 PM
                   </p>
-                  <p className="text-white/80">Saturday: 10:00 AM - 4:00 PM</p>
+                  <p className="text-white/80">
+                    Saturday: 10:00 AM - 4:00 PM
+                  </p>
                   <p className="text-white/80">Sunday: Closed</p>
                 </div>
               </div>
@@ -195,7 +211,7 @@ export default function Contact() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="p-8 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm"
+            className="p-8 border rounded-lg border-white/20 bg-white/5 backdrop-blur-sm"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Status Messages */}
@@ -203,12 +219,13 @@ export default function Contact() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center space-x-2"
+                  className="flex items-center p-4 space-x-2 border rounded-lg bg-green-500/10 border-green-500/20"
                 >
-                  <CheckCircle className="h-5 w-5 text-green-500" />
-                  <p className="text-green-400 text-sm">
-                    Thank you! Your message has been sent successfully. We'll
-                    get back to you within 24 hours.
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <p className="text-sm text-green-400">
+                    Thank you! Your message has been sent
+                    successfully. We'll get back to you within 24
+                    hours.
                   </p>
                 </motion.div>
               )}
@@ -217,12 +234,12 @@ export default function Contact() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center space-x-2"
+                  className="flex items-center p-4 space-x-2 border rounded-lg bg-red-500/10 border-red-500/20"
                 >
-                  <XCircle className="h-5 w-5 text-red-500" />
-                  <p className="text-red-400 text-sm">
-                    Sorry, there was an error sending your message. Please try
-                    again or contact us directly.
+                  <XCircle className="w-5 h-5 text-red-500" />
+                  <p className="text-sm text-red-400">
+                    Sorry, there was an error sending your message.
+                    Please try again or contact us directly.
                   </p>
                 </motion.div>
               )}
@@ -314,10 +331,14 @@ export default function Contact() {
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isSubmitting}
+              >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Sending Message...
                   </>
                 ) : (

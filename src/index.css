@@ -2,23 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom Cursor Styles */
 @layer base {
-  * {
-    cursor: none !important;
+  /* Restore default cursor behavior completely */
+  *,
+  *::before,
+  *::after {
+    cursor: auto !important;
   }
 
   html,
   body {
-    cursor: none !important;
+    cursor: auto !important;
   }
 
-  /* Custom cursor animations - no blur effects */
-  .cursor-magnetic {
-    transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Interactive elements should have pointer cursor */
+  button,
+  a,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  select,
+  [role="button"],
+  .cursor-pointer {
+    cursor: pointer !important;
   }
 
-  /* Disable cursor on mobile */
+  /* Text inputs should have text cursor */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  textarea {
+    cursor: text !important;
+  }
+
+  /* Ensure default cursor behavior on mobile */
   @media (hover: none) and (pointer: coarse) {
     * {
       cursor: auto !important;

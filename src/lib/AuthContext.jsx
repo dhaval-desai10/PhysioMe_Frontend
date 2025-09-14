@@ -1,4 +1,9 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
@@ -11,7 +16,9 @@ export function AuthProvider({ children }) {
   const location = useLocation();
 
   // Configure axios defaults
-  axios.defaults.baseURL = "https://physiome-backend.onrender.com/api";
+  axios.defaults.baseURL =
+    import.meta.env.VITE_API_URL ||
+    "https://physiome-backend.onrender.com/api";
   axios.defaults.withCredentials = true;
 
   // Add request interceptor to include token
@@ -120,7 +127,9 @@ export function AuthProvider({ children }) {
           return responseData; // Old format with just user data
         }
       } else {
-        throw new Error(response.data.message || "Registration failed");
+        throw new Error(
+          response.data.message || "Registration failed"
+        );
       }
     } catch (error) {
       console.error("Registration error:", error);

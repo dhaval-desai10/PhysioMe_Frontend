@@ -59,35 +59,30 @@ const TherapistManagement = () => {
   const handleDeleteTherapist = async (therapistId, therapistName) => {
     try {
       setDeleteLoading(therapistId);
-
-      console.log("Attempting to delete therapist from database:", therapistId);
-
+      
+      console.log('Attempting to delete therapist from database:', therapistId);
+      
       // Use the updated delete API that works with existing routes
       const response = await adminApi.deleteTherapist(therapistId);
-
-      console.log("Delete response:", response);
-
+      
+      console.log('Delete response:', response);
+      
       if (response.data.success) {
         // Remove from local state
-        setTherapists(therapists.filter((t) => t._id !== therapistId));
-        toast.success(
-          `${therapistName} has been permanently deleted from database`
-        );
+        setTherapists(therapists.filter(t => t._id !== therapistId));
+        toast.success(`${therapistName} has been permanently deleted from database`);
       } else {
         toast.error(response.data.message || "Failed to delete therapist");
       }
     } catch (error) {
       console.error("Error deleting therapist:", error);
-
+      
       if (error.response?.status === 404) {
         toast.error("Therapist not found in database");
       } else if (error.response?.status === 403) {
         toast.error("You don't have permission to delete therapists");
       } else {
-        toast.error(
-          error.response?.data?.message ||
-            "Failed to delete therapist from database"
-        );
+        toast.error(error.response?.data?.message || "Failed to delete therapist from database");
       }
     } finally {
       setDeleteLoading(null);
@@ -97,9 +92,7 @@ const TherapistManagement = () => {
   const filteredTherapists = therapists.filter(
     (therapist) =>
       therapist.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      therapist.specialization
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
+      therapist.specialization?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       therapist.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -132,9 +125,7 @@ const TherapistManagement = () => {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Dashboard
             </Button>
-            <h1 className="text-3xl font-bold text-white">
-              Therapist Management
-            </h1>
+            <h1 className="text-3xl font-bold text-white">Therapist Management</h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="relative">
@@ -158,20 +149,18 @@ const TherapistManagement = () => {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center">
-                <p className="text-2xl font-bold text-white">
-                  {therapists.length}
-                </p>
+                <p className="text-2xl font-bold text-white">{therapists.length}</p>
                 <p className="text-gray-400">Total Therapists</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold text-green-400">
-                  {therapists.filter((t) => t.status === "approved").length}
+                  {therapists.filter(t => t.status === "approved").length}
                 </p>
                 <p className="text-gray-400">Approved</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold text-yellow-400">
-                  {therapists.filter((t) => t.status === "pending").length}
+                  {therapists.filter(t => t.status === "pending").length}
                 </p>
                 <p className="text-gray-400">Pending</p>
               </div>
@@ -203,12 +192,8 @@ const TherapistManagement = () => {
                         <h3 className="text-lg font-semibold text-white">
                           {therapist.name}
                         </h3>
-                        <p className="text-blue-400">
-                          {therapist.specialization}
-                        </p>
-                        <p className="text-sm text-gray-400">
-                          {therapist.email}
-                        </p>
+                        <p className="text-blue-400">{therapist.specialization}</p>
+                        <p className="text-sm text-gray-400">{therapist.email}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
@@ -263,10 +248,7 @@ const TherapistManagement = () => {
                                 Delete Therapist
                               </AlertDialogTitle>
                               <AlertDialogDescription className="text-gray-300">
-                                Are you sure you want to permanently delete{" "}
-                                {therapist.name}? This action cannot be undone
-                                and will remove all their data from the
-                                database.
+                                Are you sure you want to permanently delete {therapist.name}? This action cannot be undone and will remove all their data from the database.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -274,12 +256,7 @@ const TherapistManagement = () => {
                                 Cancel
                               </AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() =>
-                                  handleDeleteTherapist(
-                                    therapist._id,
-                                    therapist.name
-                                  )
-                                }
+                                onClick={() => handleDeleteTherapist(therapist._id, therapist.name)}
                                 className="bg-red-600 hover:bg-red-700"
                               >
                                 Delete Permanently
@@ -301,9 +278,7 @@ const TherapistManagement = () => {
                   No therapists found
                 </h3>
                 <p className="text-gray-500">
-                  {searchTerm
-                    ? "No therapists match your search criteria."
-                    : "No therapists registered yet."}
+                  {searchTerm ? "No therapists match your search criteria." : "No therapists registered yet."}
                 </p>
               </CardContent>
             </Card>

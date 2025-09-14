@@ -135,7 +135,7 @@ export default function Patients() {
   };
 
   return (
-    <div className="py-8">
+    <div className="min-h-screen py-8">
       <div className="container px-4 mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">

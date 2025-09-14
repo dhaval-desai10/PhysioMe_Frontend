@@ -126,6 +126,19 @@ export default function BookAppointment() {
     try {
       setBooking(true);
 
+      // Debug user authentication
+      const token = localStorage.getItem("token");
+      const userStr = localStorage.getItem("user");
+      console.log("Token exists:", !!token);
+      console.log(
+        "Token preview:",
+        token ? token.substring(0, 20) + "..." : "none"
+      );
+      console.log(
+        "User from localStorage:",
+        userStr ? JSON.parse(userStr) : "none"
+      );
+
       const appointmentData = {
         physiotherapistId: therapistId,
         date: selectedDate,
@@ -135,8 +148,12 @@ export default function BookAppointment() {
         notes: notes.trim() || undefined,
       };
 
+      console.log("Sending appointment data:", appointmentData);
+
       try {
-        const response = await patientApi.createAppointment(appointmentData);
+        const response = await patientApi.createAppointment(
+          appointmentData
+        );
         console.log("Booking response:", response);
 
         // If we get here, the appointment was successfully created
@@ -176,7 +193,26 @@ export default function BookAppointment() {
         }
       } catch (apiError) {
         console.error("API Error details:", apiError);
-      
+        console.error("Response status:", apiError.response?.status);
+        console.error("Response data:", apiError.response?.data);
+
+        // Handle authentication/authorization errors
+        if (apiError.response?.status === 401) {
+          toast.error(
+            "Authentication required. Please log in again."
+          );
+          navigate("/login");
+          return;
+        }
+
+        if (apiError.response?.status === 403) {
+          toast.error(
+            "Access denied. Please ensure you're logged in as a patient."
+          );
+          console.error("403 Forbidden - User role or auth issue");
+          return;
+        }
+
         // Check if it's a genuine validation error that should be shown
         if (
           apiError.response?.status === 400 &&
@@ -198,27 +234,33 @@ export default function BookAppointment() {
         }
 
         // For other errors, check if appointment might have been created
-        console.log("Checking if appointment was created despite error...");
+        console.log(
+          "Checking if appointment was created despite error..."
+        );
 
         // Small delay then check if appointment exists
         setTimeout(async () => {
           try {
-            const appointmentsResponse = await patientApi.getMyAppointments();
-            const recentAppointments = appointmentsResponse.data.data || [];
+            const appointmentsResponse =
+              await patientApi.getMyAppointments();
+            const recentAppointments =
+              appointmentsResponse.data.data || [];
 
             // Look for an appointment created in the last minute that matches our booking
             const now = new Date();
             const oneMinuteAgo = new Date(now.getTime() - 60000);
 
-            const matchingAppointment = recentAppointments.find((apt) => {
-              const appointmentCreated = new Date(apt.createdAt);
-              return (
-                apt.physiotherapistId._id === therapistId &&
-                apt.date === selectedDate &&
-                apt.time === selectedTime &&
-                appointmentCreated >= oneMinuteAgo
-              );
-            });
+            const matchingAppointment = recentAppointments.find(
+              (apt) => {
+                const appointmentCreated = new Date(apt.createdAt);
+                return (
+                  apt.physiotherapistId._id === therapistId &&
+                  apt.date === selectedDate &&
+                  apt.time === selectedTime &&
+                  appointmentCreated >= oneMinuteAgo
+                );
+              }
+            );
 
             if (matchingAppointment) {
               console.log(
@@ -303,7 +345,8 @@ export default function BookAppointment() {
             Access Denied
           </h2>
           <p className="text-gray-600">
-            You need to be logged in as a patient to book appointments.
+            You need to be logged in as a patient to book
+            appointments.
           </p>
         </div>
       </div>
@@ -315,7 +358,9 @@ export default function BookAppointment() {
       <div className="container px-4 py-8 mx-auto">
         <div className="text-center">
           <div className="w-12 h-12 mx-auto border-b-2 rounded-full animate-spin border-primary"></div>
-          <p className="mt-4 text-gray-600">Loading therapist details...</p>
+          <p className="mt-4 text-gray-600">
+            Loading therapist details...
+          </p>
         </div>
       </div>
     );
@@ -358,8 +403,9 @@ export default function BookAppointment() {
               Appointment Booked Successfully!
             </h3>
             <p className="mb-4 text-gray-600">
-              Your appointment with {therapist?.name} has been booked for{" "}
-              {selectedDate && formatDate(selectedDate)} at {selectedTime}.
+              Your appointment with {therapist?.name} has been booked
+              for {selectedDate && formatDate(selectedDate)} at{" "}
+              {selectedTime}.
             </p>
             <div className="text-sm text-gray-500">
               Redirecting to your appointments...
@@ -405,7 +451,10 @@ export default function BookAppointment() {
                 <CardContent className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <img
-                      src={therapist.profilePictureUrl || "/images/team-1.svg"}
+                      src={
+                        therapist.profilePictureUrl ||
+                        "/images/team-1.svg"
+                      }
                       alt={therapist.name}
                       className="object-cover w-16 h-16 rounded-full"
                     />
@@ -420,7 +469,9 @@ export default function BookAppointment() {
                   </div>
 
                   {therapist.bio && (
-                    <p className="text-sm text-gray-600">{therapist.bio}</p>
+                    <p className="text-sm text-gray-600">
+                      {therapist.bio}
+                    </p>
                   )}
 
                   <div className="space-y-2">
@@ -476,7 +527,9 @@ export default function BookAppointment() {
                           <div className="flex items-center">
                             <MapPin className="w-4 h-4 mr-2" />
                             <div>
-                              <div className="font-medium">Clinic Visit</div>
+                              <div className="font-medium">
+                                Clinic Visit
+                              </div>
                               <div className="text-sm text-gray-500">
                                 Visit the therapist's clinic
                               </div>
@@ -487,7 +540,9 @@ export default function BookAppointment() {
                           <div className="flex items-center">
                             <User className="w-4 h-4 mr-2" />
                             <div>
-                              <div className="font-medium">Home Visit</div>
+                              <div className="font-medium">
+                                Home Visit
+                              </div>
                               <div className="text-sm text-gray-500">
                                 Therapist visits your location
                               </div>
@@ -519,7 +574,9 @@ export default function BookAppointment() {
                         id="date"
                         type="date"
                         value={selectedDate}
-                        onChange={(e) => handleDateChange(e.target.value)}
+                        onChange={(e) =>
+                          handleDateChange(e.target.value)
+                        }
                         min={getMinDate()}
                         max={getMaxDate()}
                         className="mt-1"
@@ -549,7 +606,9 @@ export default function BookAppointment() {
                             <Button
                               key={slot}
                               variant={
-                                selectedTime === slot ? "default" : "outline"
+                                selectedTime === slot
+                                  ? "default"
+                                  : "outline"
                               }
                               onClick={() => setSelectedTime(slot)}
                               className="h-10"
@@ -562,8 +621,8 @@ export default function BookAppointment() {
                         <div className="p-4 mt-2 text-center rounded-lg bg-gray-50">
                           <Calendar className="w-8 h-8 mx-auto mb-2 text-gray-400" />
                           <p className="text-sm text-gray-600">
-                            No available slots for this date. Please select
-                            another date.
+                            No available slots for this date. Please
+                            select another date.
                           </p>
                         </div>
                       )}
@@ -588,7 +647,9 @@ export default function BookAppointment() {
                           <SelectItem value="follow-up">
                             Follow-up Session
                           </SelectItem>
-                          <SelectItem value="assessment">Assessment</SelectItem>
+                          <SelectItem value="assessment">
+                            Assessment
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -597,7 +658,9 @@ export default function BookAppointment() {
                   {/* Notes - Show after appointment type */}
                   {visitType && selectedDate && selectedTime && (
                     <div>
-                      <Label htmlFor="notes">Additional Notes (Optional)</Label>
+                      <Label htmlFor="notes">
+                        Additional Notes (Optional)
+                      </Label>
                       <Textarea
                         id="notes"
                         value={notes}
@@ -613,7 +676,10 @@ export default function BookAppointment() {
                   <Button
                     onClick={handleBooking}
                     disabled={
-                      !visitType || !selectedDate || !selectedTime || booking
+                      !visitType ||
+                      !selectedDate ||
+                      !selectedTime ||
+                      booking
                     }
                     className="w-full"
                     size="lg"

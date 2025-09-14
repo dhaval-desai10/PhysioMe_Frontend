@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/AuthContext";
 import { Button } from "./ui/button";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, User, ChevronDown } from "lucide-react";
 import { Avatar } from "./ui/avatar";
 import { Card } from "./ui/card";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,20 +14,23 @@ export default function Navbar() {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
-  // Simplified scroll event listener
+  // Add scroll event listener to track when page is scrolled
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Add outside click functionality to close dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
         setIsOpen(false);
       }
     };
@@ -57,6 +60,12 @@ export default function Navbar() {
 
   let authLinks = [];
   if (isAuthenticated && user) {
+    // Ensure user object exists
+    const profilePicUrl =
+      user.profilePictureUrl ||
+      "https://via.placeholder.com/40?text=" +
+        (user.name ? user.name.charAt(0).toUpperCase() : "U");
+
     if (user.role === "patient") {
       authLinks = [
         { href: "/patient/dashboard", label: "Dashboard" },
@@ -68,7 +77,19 @@ export default function Navbar() {
       authLinks = [
         { href: "/therapist/dashboard", label: "Dashboard" },
         { href: "/therapist/patients", label: "Patients" },
-        { href: "/therapist/profile", label: "My Profile" },
+        {
+          href: "/therapist/profile",
+          label: "My Profile",
+          isProfileLink: true,
+
+          icon: (
+            <img
+              src={profilePicUrl}
+              alt={user.name || "Profile"}
+              className="w-8 h-8 transition-all border-2 rounded-full border-primary-light group-hover:border-primary"
+            />
+          ),
+        },
         { onClick: handleLogout, label: "Logout" },
       ];
     }
@@ -81,121 +102,95 @@ export default function Navbar() {
 
   return (
     <motion.nav
-      initial={{ y: -100, opacity: 0 }}
+      initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
-      className={`fixed top-0 z-50 w-full transition-all duration-500 ${
+      transition={{ duration: 0.5 }}
+      className={`sticky top-0 z-40 w-full transition-all duration-300 ${
         scrolled
-          ? "shadow-xl backdrop-blur-xl bg-slate-900/95 border-b border-slate-700/50"
-          : "bg-slate-900/90 backdrop-blur-sm border-b border-slate-800/50"
+          ? "shadow-sm backdrop-blur-md bg-background/80"
+          : "border-b bg-background"
       }`}
     >
-      <div className="container px-4 mx-auto lg:px-6">
+      <div className="container px-4 mx-auto">
         <div className="flex items-center justify-between h-16">
-          {/* Logo with enhanced styling */}
-          <Link to="/" className="flex items-center group">
-            <motion.div
-              className="flex items-center space-x-2"
+          {/* Logo */}
+          <Link to="/" className="flex items-center">
+            <motion.span
+              className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70"
               whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              transition={{
+                type: "spring",
+                stiffness: 400,
+                damping: 10,
+              }}
             >
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400">
-                <span className="text-sm font-bold text-white">P</span>
-              </div>
-              <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500">
-                PhysioMe
-              </span>
-            </motion.div>
+              PhysioMe
+            </motion.span>
           </Link>
 
-          {/* Desktop Navigation with improved styling */}
-          <div className="items-center hidden space-x-2 md:flex">
-            {navLinks.map((link, index) => (
+          {/* Desktop Navigation */}
+          <div className="items-center hidden space-x-1 md:flex">
+            {navLinks.map((link) => (
               <motion.div
                 key={link.href}
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{
-                  delay: index * 0.1 + 0.3,
-                  duration: 0.5,
-                  ease: "easeOut",
-                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <Link
                   to={link.href}
-                  className="relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-lg text-slate-200 hover:text-white hover:bg-slate-800/50 group"
+                  className="px-3 py-2 text-sm font-medium transition-colors rounded-md text-foreground hover:text-primary"
                 >
-                  <span className="relative z-10">{link.label}</span>
-                  <motion.div
-                    className="absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-cyan-400"
-                    initial={{ width: 0, x: "-50%" }}
-                    whileHover={{ width: "80%" }}
-                    transition={{ duration: 0.3 }}
-                  />
+                  {link.label}
                 </Link>
               </motion.div>
             ))}
           </div>
 
-          {/* Auth Section with enhanced design */}
-          <motion.div
-            className="items-center hidden space-x-3 md:flex"
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
-          >
+          {/* Auth Buttons or User Menu */}
+          <div className="items-center hidden space-x-4 md:flex">
             {isAuthenticated ? (
               <div className="relative" ref={dropdownRef}>
                 <Button
                   variant="ghost"
-                  className="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-slate-800/50 transition-all duration-300 border border-slate-700/50"
+                  className="flex items-center space-x-2 rounded-full"
                   onClick={() => setIsOpen(!isOpen)}
                 >
-                  <Avatar className="w-8 h-8 border-2 border-blue-400/50">
+                  <Avatar className="w-8 h-8 border ring-2 ring-primary/20">
                     <img
                       src={
                         user?.profilePictureUrl ||
                         `https://ui-avatars.com/api/?name=${
                           user?.name || "User"
-                        }&background=3b82f6&color=fff`
+                        }`
                       }
                       alt="Profile"
                       className="object-cover w-full h-full"
                     />
                   </Avatar>
-                  <div className="flex flex-col items-start">
-                    <span className="text-sm font-medium text-white max-w-[100px] truncate">
-                      {user?.name || "User"}
-                    </span>
-                    <span className="text-xs text-slate-400 capitalize">
-                      {user?.role || "User"}
-                    </span>
-                  </div>
-                  <motion.div
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <ChevronDown className="w-4 h-4 text-slate-400" />
-                  </motion.div>
+                  <span className="max-w-[100px] truncate">
+                    {user?.name || "User"}
+                  </span>
+                  <ChevronDown className="w-4 h-4" />
                 </Button>
 
                 <AnimatePresence>
                   {isOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.2 }}
                       className="absolute right-0 z-50 w-56 mt-2"
                     >
-                      <Card className="py-2 bg-slate-800/95 backdrop-blur-xl border-slate-700/50 shadow-xl">
+                      <Card className="py-2 border shadow-lg border-border/50">
                         {authLinks.map((link, index) => (
                           <motion.div
                             key={index}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="px-1"
+                            className="px-4 py-2"
+                            whileHover={{
+                              backgroundColor:
+                                "rgba(var(--primary), 0.1)",
+                            }}
                           >
                             {link.onClick ? (
                               <button
@@ -203,14 +198,14 @@ export default function Navbar() {
                                   link.onClick();
                                   setIsOpen(false);
                                 }}
-                                className="w-full px-3 py-2 text-sm text-left transition-all duration-200 rounded-lg text-slate-200 hover:text-white hover:bg-slate-700/50 flex items-center space-x-2"
+                                className="w-full text-sm text-left transition-colors hover:text-primary"
                               >
-                                <span>{link.label}</span>
+                                {link.label}
                               </button>
                             ) : (
                               <Link
                                 to={link.href}
-                                className="block px-3 py-2 text-sm transition-all duration-200 rounded-lg text-slate-200 hover:text-white hover:bg-slate-700/50"
+                                className="block text-sm transition-colors hover:text-primary"
                                 onClick={() => setIsOpen(false)}
                               >
                                 {link.label}
@@ -224,33 +219,32 @@ export default function Navbar() {
                 </AnimatePresence>
               </div>
             ) : (
-              <div className="flex items-center space-x-3">
-                <Link to="/login">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-700/50 hover:border-slate-600"
-                  >
-                    Login
-                  </Button>
-                </Link>
-                <Link to="/register">
-                  <Button
-                    size="sm"
-                    className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
-                    Register
-                  </Button>
-                </Link>
-              </div>
+              <>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Link to="/login">
+                    <Button variant="outline">Login</Button>
+                  </Link>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Link to="/register">
+                    <Button>Register</Button>
+                  </Link>
+                </motion.div>
+              </>
             )}
-          </motion.div>
+          </div>
 
           {/* Mobile menu button */}
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-200 border border-slate-700/50"
+              className="inline-flex items-center justify-center p-2 transition-colors rounded-md text-foreground hover:text-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
             >
               <span className="sr-only">Open main menu</span>
               <AnimatePresence mode="wait" initial={false}>
@@ -262,7 +256,7 @@ export default function Navbar() {
                     exit={{ rotate: 90, opacity: 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <X className="block w-5 h-5" aria-hidden="true" />
+                    <X className="block w-6 h-6" aria-hidden="true" />
                   </motion.div>
                 ) : (
                   <motion.div
@@ -272,7 +266,10 @@ export default function Navbar() {
                     exit={{ rotate: -90, opacity: 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Menu className="block w-5 h-5" aria-hidden="true" />
+                    <Menu
+                      className="block w-6 h-6"
+                      aria-hidden="true"
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -285,13 +282,13 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="border-t border-slate-700/50 md:hidden bg-slate-900/95 backdrop-blur-xl"
+            className="border-t md:hidden bg-background"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <div className="px-4 pt-4 pb-6 space-y-2">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               {navLinks.map((link, idx) => (
                 <motion.div
                   key={link.href}
@@ -301,7 +298,7 @@ export default function Navbar() {
                 >
                   <Link
                     to={link.href}
-                    className="block px-4 py-3 text-base font-medium transition-all duration-200 rounded-lg text-slate-200 hover:text-white hover:bg-slate-800/50"
+                    className="block px-3 py-2 text-base font-medium transition-colors rounded-md text-foreground hover:text-primary hover:bg-accent"
                     onClick={() => setIsOpen(false)}
                   >
                     {link.label}
@@ -311,40 +308,45 @@ export default function Navbar() {
 
               {isAuthenticated ? (
                 <motion.div
-                  className="pt-4 mt-4 border-t border-slate-700/50"
+                  className="pt-4 pb-3 border-t"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3, duration: 0.3 }}
                 >
-                  <div className="flex items-center px-4 py-3 bg-slate-800/30 rounded-lg mb-3">
-                    <Avatar className="w-10 h-10 border-2 border-blue-400/50">
-                      <img
-                        src={
-                          user?.profilePictureUrl ||
-                          `https://ui-avatars.com/api/?name=${
-                            user?.name || "User"
-                          }&background=3b82f6&color=fff`
-                        }
-                        alt="Profile"
-                        className="object-cover w-full h-full"
-                      />
-                    </Avatar>
+                  <div className="flex items-center px-5">
+                    <div className="flex-shrink-0">
+                      <Avatar className="w-10 h-10 border ring-2 ring-primary/20">
+                        <img
+                          src={
+                            user?.profilePictureUrl ||
+                            `https://ui-avatars.com/api/?name=${
+                              user?.name || "User"
+                            }`
+                          }
+                          alt="Profile"
+                          className="object-cover w-full h-full"
+                        />
+                      </Avatar>
+                    </div>
                     <div className="ml-3">
-                      <div className="text-base font-medium text-white">
+                      <div className="text-base font-medium">
                         {user?.name || "User"}
                       </div>
-                      <div className="text-sm text-slate-400 capitalize">
-                        {user?.role || "User"}
+                      <div className="text-sm font-medium text-muted-foreground">
+                        {user?.email}
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-1">
+                  <div className="px-2 mt-3 space-y-1">
                     {authLinks.map((link, index) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 + index * 0.1, duration: 0.3 }}
+                        transition={{
+                          delay: 0.3 + index * 0.1,
+                          duration: 0.3,
+                        }}
                       >
                         {link.onClick ? (
                           <button
@@ -352,14 +354,14 @@ export default function Navbar() {
                               link.onClick();
                               setIsOpen(false);
                             }}
-                            className="block w-full px-4 py-3 text-base font-medium text-left transition-all duration-200 rounded-lg text-slate-200 hover:text-white hover:bg-slate-800/50"
+                            className="block w-full px-3 py-2 text-base font-medium text-left transition-colors rounded-md text-foreground hover:text-primary hover:bg-accent"
                           >
                             {link.label}
                           </button>
                         ) : (
                           <Link
                             to={link.href}
-                            className="block px-4 py-3 text-base font-medium transition-all duration-200 rounded-lg text-slate-200 hover:text-white hover:bg-slate-800/50"
+                            className="block px-3 py-2 text-base font-medium transition-colors rounded-md text-foreground hover:text-primary hover:bg-accent"
                             onClick={() => setIsOpen(false)}
                           >
                             {link.label}
@@ -371,22 +373,22 @@ export default function Navbar() {
                 </motion.div>
               ) : (
                 <motion.div
-                  className="pt-4 mt-4 border-t border-slate-700/50"
+                  className="pt-4 pb-3 border-t"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3, duration: 0.3 }}
                 >
-                  <div className="flex flex-col px-4 space-y-3">
+                  <div className="flex flex-col px-5 space-y-2">
                     <Link
                       to="/login"
-                      className="block px-4 py-3 text-base font-medium text-center transition-all duration-200 rounded-lg border border-slate-700/50 text-slate-200 hover:text-white hover:bg-slate-800/50"
+                      className="block px-3 py-2 text-base font-medium text-center transition-colors rounded-md text-foreground hover:text-primary hover:bg-accent"
                       onClick={() => setIsOpen(false)}
                     >
                       Login
                     </Link>
                     <Link
                       to="/register"
-                      className="block px-4 py-3 text-base font-medium text-center transition-all duration-200 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600"
+                      className="block px-3 py-2 text-base font-medium text-center transition-colors rounded-md bg-primary text-primary-foreground hover:bg-primary/90"
                       onClick={() => setIsOpen(false)}
                     >
                       Register

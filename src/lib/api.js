@@ -67,4 +67,15 @@ export const therapists = {
   updateProfile: (id, data) => api.put(`/therapists/${id}/profile`, data),
 };
 
+export const contact = {
+  sendMessage: (data) => {
+    // Create a separate axios instance for public contact endpoint without credentials
+    const publicApi = axios.create({
+      baseURL: import.meta.env.VITE_API_URL || 'https://physiome-backend.onrender.com/api',
+      withCredentials: false, // Don't send credentials for public contact form
+    });
+    return publicApi.post('/contact', data);
+  },
+};
+
 export default api; 

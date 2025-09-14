@@ -210,6 +210,7 @@ export default function PatientDashboard() {
           setError("No therapists available at the moment.");
         }
       } catch (err) {
+    
         if (err.response?.status === 403) {
           setError(
             "You do not have permission to view therapists. Please contact support."
@@ -257,6 +258,7 @@ export default function PatientDashboard() {
           setAppointments([]);
         }
       } catch (error) {
+       
         setAppointments([]);
       }
     };
@@ -277,6 +279,7 @@ export default function PatientDashboard() {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
+
 
         if (response.data.success) {
           setExercisePlans(response.data.data);
@@ -370,6 +373,8 @@ export default function PatientDashboard() {
         ))
   );
 
+
+
   const handleCancelBooking = (appointmentId) => {
     // Placeholder: Implement actual cancellation logic
     alert(`Booking cancellation requested for appointment ${appointmentId}.`);
@@ -405,7 +410,7 @@ export default function PatientDashboard() {
 
   return (
     <motion.div
-      className="py-8 bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900"
+      className="min-h-screen py-8 bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
